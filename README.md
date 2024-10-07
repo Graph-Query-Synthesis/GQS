@@ -2,7 +2,7 @@
 
 ## Previously Unknown Bugs Detected
 
-GQS has detected 35 bugs in Neo4j, Memgraph, FalkorDB and Kuzu in total. 25 of them are logic bugs, and 10 of them are other bugs, like database crash or unhandled exception. The bug list is as follows:
+GQS has detected 35 bugs in Neo4j, Memgraph, FalkorDB, and Kuzu in total. 25 of them are logic bugs, and 10 of them are other bugs, like database crashes or unhandled exceptions. The bug list is as follows:
 
 | Bug Numer | Database | Type  | Issue                                            |
 | --------- | -------- | ----- | ------------------------------------------------ |
@@ -53,7 +53,7 @@ To build GQS, please make sure that you have the following environment installed
 Maven 3.9.6
 Java-JDK 21.0
 ```
-Then, using the following command to compile the source code:
+Then, use the following command to compile the source code:
 ```
 mvn install -DskipTests -T1C
 ```
@@ -72,7 +72,7 @@ memgraph -> Memgraph
 falkordb -> FalkorDB
 kuzu -> Kùzu
 ```
-Before running GQS, please correctly configure the `config.txt`, which specifies the commands to start, stop and reset the database system. GQS executes these commands everytime a new test cycle starts.
+Before running GQS, please correctly configure the `config.txt`, which specifies the commands to start, stop and reset the database system. GQS executes these commands every time a new test cycle starts.
 In the following, we describe the configuration process of each database in detail.
 
 ### Neo4j
@@ -103,7 +103,7 @@ In the following, we describe the configuration process of each database in deta
 server.bolt.listen_address=127.0.0.1:___PORT___1
 server.http.listen_address=127.0.0.1:___PORT___2
 ```
-1. Configure the `config.txt` based on the directory of your Neo4j database. The following commands give you an example when you install the Neo4j database in `neo4j` folder at the current directory, and place testing temporary files in `~/neo4j/`. Please note that `THREAD_FOLDER` is a constant that will be subsititued by GQS to put databases under different testing threads to distinct locations. `THREAD_WEB` and `THREAD_SERVER` will be subsititued by GQS to specify the port.  `LOG_DIRECTORY` will be changed to the corresponding log folder.
+4. Configure the `config.txt` based on the directory of your Neo4j database. The following commands give you an example when you install the Neo4j database in `neo4j` folder at the current directory, and place testing temporary files in `~/neo4j/`. Please note that `THREAD_FOLDER` is a constant that will be substituted by GQS to put databases under different testing threads to distinct locations. `THREAD_WEB` and `THREAD_SERVER` will be substituted by GQS to specify the port.  `LOG_DIRECTORY` will be changed to the corresponding log folder.
 ```
 startCommand=aa=$PWD; mkdir -p ~/neo4j/THREAD_FOLDER; cd ~/neo4j/THREAD_FOLDER; cp -r $aa/neo4j ~/neo4j/THREAD_FOLDER; mkdir -p ./logs/neo4j; cd neo4j; ./change_port.sh conf/neo4j.conf THREAD_WEB THREAD_SERVER; ./bin/neo4j-admin server console 2>&1 &
 stopCommand=kill -9 `netstat -tulnp | grep :THREAD_WEB | awk '{print $7}' | cut -d'/' -f1`
@@ -118,7 +118,7 @@ You will find the testing log and results in `logs` folder.
 ### Memgraph
 1. Download the Memgraph source code from the Github repository (https://github.com/memgraph/memgraph).
 2. Compile the source code and copy the Memgraph database binary into the current directory. 
-3. Configure the `config.txt` based on your needs. The following commands give you an example when you put the Memgraph binary at the current folder, and testing temporary files in `~/memgraph/`. Please note that `THREAD_FOLDER` is a constant that will be subsititued by GQS to put databases under different testing threads to distinct locations. `THREAD_WEB` will be subsititued by GQS to specify the port. 
+3. Configure the `config.txt` based on your needs. The following commands give you an example of when you put the Memgraph binary at the current folder, and test temporary files in `~/memgraph/`. Please note that `THREAD_FOLDER` is a constant that will be substituted by GQS to put databases under different testing threads in distinct locations. `THREAD_WEB` will be substituted by GQS to specify the port. 
 ```
 startCommand=aa=$PWD; mkdir -p ~/memgraph/THREAD_FOLDER; cd ~/memgraph/THREAD_FOLDER; mkdir -p ./logs/memgraph; cp $aa/memgraph ~/memgraph/THREAD_FOLDER; cp $aa/libmemgraph_module_support.so  ~/memgraph/THREAD_FOLDER/; ./memgraph --bolt-address 127.0.0.1 --bolt-port THREAD_WEB --storage-properties-on-edges true --query-execution-timeout-sec=30 > LOG_DIRECTORY/THREAD_FOLDER.log 2>&1 &
 stopCommand=kill -9 `netstat -tulnp | grep :THREAD_WEB | awk '{print $7}' | cut -d'/' -f1`;rm -rf ~/memgraph/THREAD_FOLDER
@@ -133,7 +133,7 @@ You will find the testing log and results in `logs` folder.
 ### FalkorDB
 1. Download the FalkorDB source code from the Github repository (https://github.com/FalkorDB/FalkorDB).
 2. Compile the source code and copy the suitable `falkordb.so` library into the directory where redis server is installed, configure the redis server to automatically load this module once started.
-3. Configure the `config.txt` based on your needs. The following commands give you an example when you put the redis server and the falkordb library into the `falkordb` folder at the current directory, and testing temporary files in `~/falkordb/`. Make sure you also put `change_port.sh` into the redis server folder to enable GQS automatically change the port redis server binds to. Please note that `THREAD_FOLDER` is a constant that will be subsititued by GQS to put databases under different testing threads to distinct locations. `THREAD_WEB` will be subsititued by GQS to specify the port. 
+3. Configure the `config.txt` based on your needs. The following commands give you an example of when you put the redis server and the falkordb library into the `falkordb` folder in the current directory, and test temporary files in `~/falkordb/`. Make sure you also put `change_port.sh` into the Redis server folder to enable GQS to automatically change the port redis server binds to. Please note that `THREAD_FOLDER` is a constant that will be substituted by GQS to put databases under different testing threads in distinct locations. `THREAD_WEB` will be substituted by GQS to specify the port. 
 ```
 startCommand=aa=$PWD/falkordb/; mkdir -p ~/falkordb/THREAD_FOLDER; cd ~/falkordb/THREAD_FOLDER; mkdir -p ./logs/falkordb/; cp $aa/* ~/falkordb/THREAD_FOLDER;  ./change_port.sh redis.conf THREAD_WEB THREAD_WEB; ./redis-server ./redis.conf > LOG_DIRECTORY/THREAD_FOLDER.log 2>&1 &
 stopCommand=kill -9 `netstat -tulnp | grep :THREAD_WEB | awk '{print $7}' | cut -d'/' -f1`
@@ -151,7 +151,7 @@ You will find the testing log and results in `logs` folder.
 
 ### Kuzu
 
-Kuzu database is already embedded in the GQS. You do not need to download or compile it, but just need to correctly configure the `config.txt`. By default, the temporary testing files will be put at `~/kuzu`.
+The Kuzu database is already embedded in the GQS. You do not need to download or compile it, but just need to correctly configure the `config.txt`. By default, the temporary testing files will be put at `~/kuzu`.
 ```
 startCommand=random
 stopCommand=random
